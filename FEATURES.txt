@@ -1,0 +1,6 @@
+1(SPLASH SCREEN) > https://flutter.dev/docs/development/ui/advanced/splash-screen
+2(LOGIN/SIGNUP) > Login (E-mail pessoal e senha ou com Google) > Criar Conta, Esqueci Minha Senha
+3(HOME) > Dados do operador(Nome, Nome do espaço, Foto (Espaço, Logo, Pessoal, CREFITO), Endereço(selecionar no mapa))
+4(DRAWNER) Dados do operador e rota para editar os dados
+5(Paciente) > Listagem de pacientes(com dados de resumo)
+6(Paciente) > Separar o stepper
