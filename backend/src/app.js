@@ -18,7 +18,7 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(
-    "/files",
+    "/api/v1/files",
     express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
   );
 app.use('/api/v1', routesAuth)
