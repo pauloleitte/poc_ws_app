@@ -5,7 +5,6 @@ import 'package:poc_ws_app/utils/constants.dart';
 import 'package:poc_ws_app/utils/size-config.dart';
 
 class HomePage extends StatelessWidget {
-  static String routeName = '/home';
   const HomePage({Key key}) : super(key: key);
 
   @override

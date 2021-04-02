@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/modules/patient/models/patient.dart';
-import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
+import 'package:poc_ws_app/utils/app-routes.dart';
 
 class PatientItem extends StatelessWidget {
   final Patient patient;
@@ -15,34 +16,51 @@ class PatientItem extends StatelessWidget {
       ),
       title: Text(patient.nome),
       onLongPress: () {
-        print("segurei!!");
-        showAdaptiveActionSheet(
-          context: context,
-          title: Text('${patient.nome}'),
-          actions: <BottomSheetAction>[
-            BottomSheetAction(
-                title: Text('Editar'),
-                onPressed: () {
-                  print("editou");
-                  Navigator.of(context)
-                      .pushNamed("/patient-form", arguments: patient);
-                }),
-            BottomSheetAction(
-                title: Text(
-                  'Excluir',
-                  style: TextStyle(
-                      fontSize: 20, color: Theme.of(context).errorColor),
-                ),
-                onPressed: () {
-                  print("excluiu");
-                  Navigator.of(context).pop(true);
-                  Navigator.pushReplacementNamed(context, "/patients");
-                }),
+        final action = CupertinoActionSheet(
+          title: Text(
+            patient.nome,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          message: Text(
+            "O que deseja fazer?",
+            style: TextStyle(fontSize: 18.0),
+          ),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              child: Text(
+                "Editar",
+                style: TextStyle(color: Colors.blue),
+              ),
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.of(context)
+                    .pushNamed(AppRoutes.PATIENT_FORM, arguments: patient);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(
+                "Excluir",
+                style: TextStyle(color: Theme.of(context).errorColor),
+              ),
+              isDestructiveAction: true,
+              onPressed: () {
+                print("Action 2 is been clicked");
+                Navigator.pop(context);
+              },
+            )
           ],
-          cancelAction: CancelAction(
-              title: Text(
-                  'Cancelar')), // onPressed parameter is optional by default will dismiss the ActionSheet
+          cancelButton: CupertinoActionSheetAction(
+            child: Text(
+              "Cancelar",
+              style: TextStyle(color: Colors.lightBlue),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         );
+        showCupertinoModalPopup(context: context, builder: (context) => action);
       },
       subtitle: Text('${patient.cpf}'),
     );

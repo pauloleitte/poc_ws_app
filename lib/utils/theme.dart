@@ -5,30 +5,44 @@ import 'constants.dart';
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
+    accentColor: purple,
+    primarySwatch: purple,
     fontFamily: 'Muli',
     appBarTheme: appBarTheme(),
     textTheme: textTheme(),
     inputDecorationTheme: inputDecorationTheme(),
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    primarySwatch: white,
+    textSelectionTheme: textSelectionThemeData(),
   );
 }
 
 InputDecorationTheme inputDecorationTheme() {
-  OutlineInputBorder outlineInputBorder = OutlineInputBorder(
+  OutlineInputBorder enabledBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(28),
     borderSide: BorderSide(color: kTextColor),
     gapPadding: 10,
   );
+
+  OutlineInputBorder focusedBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(28),
+    borderSide: BorderSide(
+        color: kSecondaryColor, style: BorderStyle.solid, width: 2.0),
+    gapPadding: 10,
+  );
   return InputDecorationTheme(
-    // If  you are using latest version of flutter then lable text and hint text shown like this
-    // if you r using flutter less then 1.20.* then maybe this is not working properly
-    // if we are define our floatingLabelBehavior in our theme then it's not applayed
     floatingLabelBehavior: FloatingLabelBehavior.always,
-    contentPadding: EdgeInsets.symmetric(horizontal: 42, vertical: 20),
-    enabledBorder: outlineInputBorder,
-    focusedBorder: outlineInputBorder,
-    border: outlineInputBorder,
+    contentPadding: EdgeInsets.all(25),
+    enabledBorder: enabledBorder,
+    focusedBorder: focusedBorder,
+    border: enabledBorder,
+  );
+}
+
+TextSelectionThemeData textSelectionThemeData() {
+  return TextSelectionThemeData(
+    cursorColor: kSecondaryColor,
+    selectionColor: kSecondaryColor,
+    selectionHandleColor: kSecondaryColor,
   );
 }
 
@@ -46,7 +60,7 @@ AppBarTheme appBarTheme() {
     brightness: Brightness.light,
     iconTheme: IconThemeData(color: Colors.white),
     textTheme: TextTheme(
-      headline6: TextStyle(color: Color(0xFFFFFFFF), fontSize: 18),
+      headline6: TextStyle(color: Colors.white, fontSize: 18),
     ),
   );
 }
