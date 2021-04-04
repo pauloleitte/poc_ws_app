@@ -1,16 +1,9 @@
 const Patient = require("../model/Patient");
-Patient.updateOptions({
-    new: true,
-    runValidators: true
-})
-
 module.exports = {
 
     async create(patient) {
         try {
-            return await Patient.create({
-                patient
-            });
+            return await Patient.create(patient);
         } catch (e) {
             throw e;
         }
@@ -21,7 +14,11 @@ module.exports = {
     },
 
     async findOneAndDelete(id) {
-        return await Patient.findOneAndDelete(id);
+        try {
+            return await Patient.findOneAndDelete(id);
+        } catch (e) {
+            throw e;
+        }
     },
 
     async findOneAndUpdate(patient) {
@@ -34,12 +31,17 @@ module.exports = {
         }
     },
 
-    async findAll() {
-        return await Patient.find({});
+    async findAll(userId) {
+        return await Patient.find({
+            userId: userId
+        });
     },
 
-    async findOne(id) {
-        return await Patient.findById(id)
+    async findOne(cpf, userId) {
+        return await Patient.findOne({
+            cpf: cpf,
+            userId: userId,
+        })
     }
 
 }

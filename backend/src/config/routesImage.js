@@ -5,7 +5,9 @@ const multerConfig = require("./multer");
 const Image = require("../model/Image");
 
 routes.get("/images", async (req, res) => {
-    const images = await Image.find();
+    const images = await Image.find({
+        userId: req.userId
+    });
 
     return res.json(images);
 });
@@ -22,7 +24,8 @@ routes.post("/images", multer(multerConfig).single("file"), async (req, res) => 
         name,
         size,
         key,
-        url
+        url,
+        userId: req.userId
     });
 
     return res.json(image);

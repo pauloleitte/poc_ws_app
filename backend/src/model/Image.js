@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 const aws = require("aws-sdk");
 const fs = require("fs");
 const path = require("path");
-const { promisify } = require("util");
+const {
+  promisify
+} = require("util");
+const {
+  timeStamp
+} = require("console");
 
 const s3 = new aws.S3();
 
@@ -11,10 +16,13 @@ const ImageSchema = new mongoose.Schema({
   size: Number,
   key: String,
   url: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  }
+}, {
+  timestamps: true
 });
 
 ImageSchema.pre("save", function () {

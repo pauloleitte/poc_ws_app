@@ -1,45 +1,92 @@
-const Patient = require('../model/Patient')
-const _ = require('lodash')
+const patientService = require("../service/patientService")
+const errorService = require("../service/errorsService");
 
-Patient.methods(['get', 'post', 'put', 'delete'])
-Patient.updateOptions({
-    new: true,
-    runValidators: true
-})
+module.exports = {
+    async create(req, res) {
 
-Patient.after('post', sendErrorsOrNext).after('put', sendErrorsOrNext)
+        const patient = req.body;
+        patient.userId = req.userId;
 
-function sendErrorsOrNext(req, res, next) {
-    const bundle = res.locals.bundle
+        try {
 
-    if (bundle.errors) {
-        var errors = parseErrors(bundle.errors)
-        res.status(500).json({
-            errors
-        })
-    } else {
-        next()
-    }
-}
+            const exist = await patientService.findOne(patient.cpf, patient.userId);
 
-function parseErrors(nodeRestfulErrors) {
-    const errors = []
-    _.forIn(nodeRestfulErrors, error => errors.push(error.message))
-    return errors
-}
+            if (!exist) {
+                return res.status(201).json(
+                    await patientService.create(patient)
+                );
+            }
+            return res.status(400).json({
+                message: 'Paciente já cadastrado.'
+            });
 
-Patient.route('count', function (req, res, next) {
-    Patient.count(function (error, value) {
-        if (error) {
-            res.status(500).json({
-                errors: [error]
+        } catch (e) {
+            return errorService.sendErrors(req, res, e);
+        }
+
+    },
+
+    async delete(req, res) {
+        const id = req.params.id
+        try {
+            const exist = await patientService.findById(id);
+
+            if (exist) {
+                await patientService.findOneAndDelete(id);
+                return res.status(204)
+            }
+
+            return res.status(404).json({
+                message: 'Paciente não localizada.'
             })
-        } else {
-            res.json({
-                value
+
+        } catch (e) {
+            return res.status(500).json({
+                error: e
             })
         }
-    })
-})
 
-module.exports = Patient
+    },
+
+    async update(req, res) {
+        const patient = req.body;
+
+        const id = req.params.id
+
+        try {
+            const exist = await patientService.findById(id)
+
+            if (exist) {
+                console.log(patient)
+                const patientr = await patientService.findOneAndUpdate(patient);
+                console.log(patientr);
+                return res.status(204).send()
+            }
+
+            return res.status(404).json({
+                message: 'Paciente não localizado.'
+            })
+
+        } catch (e) {
+            return errorService.sendErrors(req, res, e);
+        }
+
+    },
+
+    async findAll(req, res) {
+        return res.json(await patientService.findAll(req.userId));
+    },
+
+    async findOne(req, res) {
+        const id = req.params.id
+        const patient = await patientService.findOne(id);
+        if (patient) {
+            return res.json(patient)
+        } else {
+            return res.status(404).send({
+                message: 'Paciente não localizado.'
+            });
+        }
+
+    }
+}

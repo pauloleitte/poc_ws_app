@@ -1,11 +1,7 @@
-const {
-    Schema,
-    model
-} = require('mongoose');
+const mongoose = require("mongoose");
+const bcryptService = require("../service/BcryptService");
 
-const restful = require('node-restful')
-
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -16,10 +12,23 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
-        required: true  
+        required: true,
     },
+    passwordResetToken: {
+        type: String,
+        select: false
+    },
+    passwordResetExpires: {
+        type: Date,
+        select: false,
+    }
 }, {
     timestamps: true
 });
 
-module.exports = restful.model('User', UserSchema)
+UserSchema.pre('save', async function(next) {
+    this.password = await bcryptService.encrypt(this.password)
+    next();
+})
+
+module.exports = mongoose.model('User', UserSchema)

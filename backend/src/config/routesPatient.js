@@ -1,10 +1,7 @@
 const express = require("express");
-const patientController = require("../controller/npatientController");
+const patientController = require("../controller/patientController");
 
 const routes = express.Router();
-
-//routes patient
-//patientController.register(routes,"/patient");
 
 routes.get("/patient", patientController.findAll)
 routes.get("/patient/:id",  patientController.findOne)
