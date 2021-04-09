@@ -15,28 +15,45 @@ class _PatientFormPageState extends State<PatientFormPage> {
   final _form = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
 
-  final _nomeFocusNode = FocusNode();
-  final _idadeFocusNode = FocusNode();
+  final _nameFocusNode = FocusNode();
+  final _naturalnessFocusNode = FocusNode();
+  final _maritalStatusFocusNode = FocusNode();
   final _cpfFocusNode = FocusNode();
-  final _dataNascFocusNode = FocusNode();
-  final _sexoFocusNode = FocusNode();
+  final _rgFocusNode = FocusNode();
+  final _birthDateFocusNode = FocusNode();
+  final _genreFocusNode = FocusNode();
+  final _professionFocusNode = FocusNode();
 
-  final _celularFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
+  final _cellphoneFocusNode = FocusNode();
+  final _telephoneFocusNode = FocusNode();
 
   final _cepFocusNode = FocusNode();
-  final _enderecoFocusNode = FocusNode();
-  final _numeroFocusNode = FocusNode();
-  final _bairroFocusNode = FocusNode();
-  final _cidadeFocusNode = FocusNode();
-  final _estadoFocusNode = FocusNode();
-
-  final _alturaFocusNode = FocusNode();
-  final _pesoFocusNode = FocusNode();
-  final _tipoSanguineoFocusNode = FocusNode();
+  final _addressFocusNode = FocusNode();
+  final _districtFocusNode = FocusNode();
+  final _cityFocusNode = FocusNode();
+  final _stateFocusNode = FocusNode();
 
   final defaultNumberKeyboard = TextInputType.numberWithOptions(decimal: true);
   bool _isLoading = false;
+
+  Future<void> _saveForm() async {
+    var isValid = _form.currentState.validate();
+
+    if (!isValid) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    _form.currentState.save();
+
+    final patient = Patient.fromJson(_formData);
+
+    print(patient.name);
+  }
 
   void _requestFocus(FocusNode focusNode) {
     setState(() {
@@ -55,8 +72,10 @@ class _PatientFormPageState extends State<PatientFormPage> {
   }
 
   continued() {
-    print(_formData.toString());
-    _currentStep < 3 ? setState(() => _currentStep += 1) : null;
+    if (_currentStep == 2) {
+      _saveForm();
+    }
+    _currentStep < 2 ? setState(() => _currentStep += 1) : null;
   }
 
   cancel() {
@@ -70,43 +89,41 @@ class _PatientFormPageState extends State<PatientFormPage> {
       final patient = ModalRoute.of(context).settings.arguments as Patient;
 
       if (patient != null) {
-        _formData['id'] = patient.id;
-        _formData['nome'] = patient.nome;
-        _formData['idade'] = patient.idade;
+        _formData['sId'] = patient.sId;
+        _formData['name'] = patient.name;
+        _formData['naturalness'] = patient.naturalness;
+        _formData['maritalStatus'] = patient.maritalStatus;
         _formData['cpf'] = patient.cpf;
-        _formData['dataNasc'] = patient.dataNasc;
-        _formData['sexo'] = patient.sexo;
-        _formData['cep'] = patient.cep;
-        _formData['endereco'] = patient.endereco;
-        _formData['numero'] = patient.numero;
-        _formData['bairro'] = patient.bairro;
-        _formData['cidade'] = patient.cidade;
-        _formData['estado'] = patient.estado;
-        _formData['celular'] = patient.celular;
+        _formData['rg'] = patient.rg;
+        _formData['birthDate'] = patient.birthDate;
+        _formData['genre'] = patient.genre;
         _formData['email'] = patient.email;
-        _formData['altura'] = patient.altura;
-        _formData['peso'] = patient.peso;
-        _formData['tipoSanguineo'] = patient.tipoSanguineo;
-        _formData['imageAvatar'] = patient.imageAvatar;
+        _formData['telephone'] = patient.telephone;
+        _formData['cellphone'] = patient.cellphone;
+        _formData['cep'] = patient.cep;
+        _formData['address'] = patient.address;
+        _formData['district'] = patient.district;
+        _formData['city'] = patient.city;
+        _formData['state'] = patient.state;
+        _formData['profession'] = patient.profession;
       } else {
-        _formData['id'] = "";
-        _formData['nome'] = "";
-        _formData['idade'] = "";
-        _formData['cpf'] = "";
-        _formData['dataNasc'] = "";
-        _formData['sexo'] = "";
-        _formData['cep'] = "";
-        _formData['endereco'] = "";
-        _formData['numero'] = "";
-        _formData['bairro'] = "";
-        _formData['cidade'] = "";
-        _formData['estado'] = "";
-        _formData['celular'] = "";
-        _formData['email'] = "";
-        _formData['altura'] = "";
-        _formData['peso'] = "";
-        _formData['tipoSanguineo'] = "";
-        _formData['imageAvatar'] = "";
+        _formData['sId'] = '';
+        _formData['name'] = '';
+        _formData['naturalness'] = '';
+        _formData['maritalStatus'] = '';
+        _formData['cpf'] = '';
+        _formData['rg'] = '';
+        _formData['birthDate'] = '';
+        _formData['genre'] = '';
+        _formData['email'] = '';
+        _formData['telephone'] = '';
+        _formData['cellphone'] = '';
+        _formData['cep'] = '';
+        _formData['address'] = '';
+        _formData['district'] = '';
+        _formData['city'] = '';
+        _formData['state'] = '';
+        _formData['profession'] = '';
       }
     }
   }
@@ -148,7 +165,7 @@ class _PatientFormPageState extends State<PatientFormPage> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
-              print(_formData.toString());
+              _saveForm();
             },
           )
         ],
@@ -177,7 +194,9 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                 children: <Widget>[
                                   ElevatedButton(
                                     onPressed: onStepContinue,
-                                    child: const Text('Continuar'),
+                                    child: _currentStep == 2
+                                        ? Text('Salvar')
+                                        : Text('Continuar'),
                                   ),
                                   SizedBox(width: 15),
                                   ElevatedButton(
@@ -204,17 +223,9 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                       height: 10,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'nome',
+                                        fieldForm: 'name',
                                         label: 'nome',
-                                        focusNode: _nomeFocusNode),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    createTextFormField(
-                                        fieldForm: 'idade',
-                                        label: 'idade',
-                                        keyboardType: defaultNumberKeyboard,
-                                        focusNode: _idadeFocusNode),
+                                        focusNode: _nameFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -227,17 +238,46 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'dataNasc',
-                                        label: 'data de nascimento',
+                                        fieldForm: 'rg',
+                                        label: 'rg',
                                         keyboardType: defaultNumberKeyboard,
-                                        focusNode: _dataNascFocusNode),
+                                        focusNode: _rgFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'sexo',
-                                        label: 'sexo',
-                                        focusNode: _sexoFocusNode),
+                                        fieldForm: 'naturalness',
+                                        label: 'naturalidade',
+                                        keyboardType: defaultNumberKeyboard,
+                                        focusNode: _naturalnessFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    createTextFormField(
+                                        fieldForm: 'genre',
+                                        label: 'gênero',
+                                        focusNode: _genreFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    createTextFormField(
+                                        fieldForm: 'birthDate',
+                                        label: 'data de nascimento',
+                                        focusNode: _birthDateFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    createTextFormField(
+                                        fieldForm: 'maritalStatus',
+                                        label: 'estado civil',
+                                        focusNode: _maritalStatusFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    createTextFormField(
+                                        fieldForm: 'profession',
+                                        label: 'profissão',
+                                        focusNode: _professionFocusNode)
                                   ],
                                 ),
                                 isActive: _currentStep >= 0,
@@ -254,10 +294,18 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                       height: 10,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'celular',
+                                        fieldForm: 'cellphone',
                                         label: 'celular',
                                         keyboardType: TextInputType.phone,
-                                        focusNode: _celularFocusNode),
+                                        focusNode: _cellphoneFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    createTextFormField(
+                                        fieldForm: 'telephone',
+                                        label: 'telefone fixo',
+                                        keyboardType: TextInputType.phone,
+                                        focusNode: _telephoneFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -290,77 +338,34 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'endereco',
+                                        fieldForm: 'address',
                                         label: 'endereço',
-                                        focusNode: _enderecoFocusNode),
+                                        focusNode: _addressFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'numero',
-                                        label: 'número',
-                                        focusNode: _numeroFocusNode),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    createTextFormField(
-                                        fieldForm: 'bairro',
+                                        fieldForm: 'district',
                                         label: 'bairro',
-                                        focusNode: _bairroFocusNode),
+                                        focusNode: _districtFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'cidade',
-                                        label: 'estado',
-                                        focusNode: _cidadeFocusNode),
+                                        fieldForm: 'city',
+                                        label: 'cidade',
+                                        focusNode: _cityFocusNode),
                                     SizedBox(
                                       height: 20,
                                     ),
                                     createTextFormField(
-                                        fieldForm: 'estado',
+                                        fieldForm: 'state',
                                         label: 'estado',
-                                        focusNode: _estadoFocusNode),
+                                        focusNode: _stateFocusNode),
                                   ],
                                 ),
                                 isActive: _currentStep >= 0,
                                 state: _currentStep >= 1
-                                    ? StepState.complete
-                                    : StepState.disabled,
-                              ),
-                              Step(
-                                title: new Text('Dados clínicos'),
-                                subtitle: Text('Informe os dados clínicos'),
-                                content: Column(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    createTextFormField(
-                                        fieldForm: 'altura',
-                                        label: 'altura',
-                                        keyboardType: defaultNumberKeyboard,
-                                        focusNode: _alturaFocusNode),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    createTextFormField(
-                                        fieldForm: 'peso',
-                                        label: 'peso',
-                                        keyboardType: defaultNumberKeyboard,
-                                        focusNode: _pesoFocusNode),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    createTextFormField(
-                                        fieldForm: 'tipoSanguineo',
-                                        label: 'tipo sanguineo',
-                                        keyboardType: defaultNumberKeyboard,
-                                        focusNode: _tipoSanguineoFocusNode),
-                                  ],
-                                ),
-                                isActive: _currentStep >= 0,
-                                state: _currentStep >= 2
                                     ? StepState.complete
                                     : StepState.disabled,
                               ),

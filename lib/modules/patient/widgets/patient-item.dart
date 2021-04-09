@@ -11,14 +11,11 @@ class PatientItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(patient.imageAvatar),
-      ),
-      title: Text(patient.nome),
+      title: Text(patient.name),
       onLongPress: () {
         final action = CupertinoActionSheet(
           title: Text(
-            patient.nome,
+            patient.name,
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           message: Text(

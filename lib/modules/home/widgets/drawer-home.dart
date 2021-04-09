@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poc_ws_app/utils/app-routes.dart';
 import 'package:poc_ws_app/utils/constants.dart';
 
 class DrawerHome extends StatelessWidget {
@@ -42,7 +43,7 @@ class DrawerHome extends StatelessWidget {
               title: Text('Pacientes'),
               subtitle: Text('pacientes'),
               onTap: () {
-                Navigator.of(context).pushNamed('/patients');
+                Navigator.of(context).pushNamed(AppRoutes.PATIENTS);
               },
             ),
           ],
