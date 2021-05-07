@@ -13,19 +13,17 @@ module.exports = {
         return await Patient.findById(id)
     },
 
-    async findOneAndDelete(id) {
+    async findByIdAndRemove(id) {
         try {
-            return await Patient.findOneAndDelete(id);
+            return await Patient.findByIdAndRemove(id).exec();
         } catch (e) {
             throw e;
         }
     },
 
-    async findOneAndUpdate(patient) {
+    async findByIdAndUpdate(id, patient) {
         try {
-            return await Patient.findOneAndUpdate(patient._id, {
-                patient
-            });
+            return await Patient.findByIdAndUpdate(id, { $set: patient }, { new: true });
         } catch (e) {
             throw e;
         }
@@ -37,7 +35,7 @@ module.exports = {
         });
     },
 
-    async findOne(cpf, userId) {
+    async findOneByCpf(cpf, userId) {
         return await Patient.findOne({
             cpf: cpf,
             userId: userId,
