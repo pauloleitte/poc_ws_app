@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/utils/size-config.dart';
 
-const kPrimaryColor = Color(0xFFFFFFFF);
-const kPrimaryLightColor = Color(0xFFA067FF);
+const kPrimaryColor = Color(0xFF646ECB);
+const kPrimaryLightColor = Color(0xFFFFFFFF);
 const kPrimaryGradientColor = LinearGradient(
   begin: Alignment.bottomLeft,
   end: Alignment.topRight,
-  colors: [Color(0xFF8E26EB), Colors.black],
+  colors: [Color(0xFF646ECB), Color(0xFFA8EB12)],
 );
-const kSecondaryColor = Color(0xFFA067F0);
-const kTextColor = Color(0xFFA067FF);
-const kBlackColor = Colors.black;
+const kSecondaryColor = Color(0xFFFFFFFF);
+const kTextColor = Color(0xFFFFFFFF);
 
 const kAnimationDuration = Duration(milliseconds: 200);
 
 final headingStyle = TextStyle(
   fontSize: getProportionateScreenWidth(28),
   fontWeight: FontWeight.bold,
-  color: Colors.black,
   height: 1.5,
 );
 
@@ -38,17 +36,17 @@ const MaterialColor white = const MaterialColor(
 );
 
 const MaterialColor purple = const MaterialColor(
-  0xFFA067FF,
+  0xFF646ECB,
   const <int, Color>{
-    50: const Color(0xFFA067FF),
-    100: const Color(0xFFA067FF),
-    200: const Color(0xFFA067FF),
-    300: const Color(0xFFA067FF),
-    400: const Color(0xFFA067FF),
-    500: const Color(0xFFA067FF),
-    600: const Color(0xFFA067FF),
-    700: const Color(0xFFA067FF),
-    800: const Color(0xFFA067FF),
-    900: const Color(0xFFA067FF),
+    50: const Color(0xFF646ECB),
+    100: const Color(0xFF646ECB),
+    200: const Color(0xFF646ECB),
+    300: const Color(0xFF646ECB),
+    400: const Color(0xFF646ECB),
+    500: const Color(0xFF646ECB),
+    600: const Color(0xFF646ECB),
+    700: const Color(0xFF646ECB),
+    800: const Color(0xFF646ECB),
+    900: const Color(0xFF646ECB),
   },
 );

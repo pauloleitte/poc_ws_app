@@ -9,20 +9,20 @@ class PatientPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       appBar: AppBar(
-          title: Text("Pacientes"),
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.PATIENT_FORM);
-              },
-            ),
-          ],
-          flexibleSpace: Container(
-            decoration: BoxDecoration(gradient: kPrimaryGradientColor),
-          )),
+        backgroundColor: kPrimaryColor,
+        title: Text("Pacientes"),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.PATIENT_FORM);
+            },
+          ),
+        ],
+      ),
       body: BodyPatient(),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/modules/patient/models/patient.dart';
+import 'package:poc_ws_app/utils/app-routes.dart';
 import 'package:poc_ws_app/utils/constants.dart';
 
 class PatientFormPage extends StatefulWidget {
@@ -53,6 +54,7 @@ class _PatientFormPageState extends State<PatientFormPage> {
     final patient = Patient.fromJson(_formData);
 
     print(patient.name);
+    Navigator.pop(context);
   }
 
   void _requestFocus(FocusNode focusNode) {
@@ -140,6 +142,7 @@ class _PatientFormPageState extends State<PatientFormPage> {
         },
         initialValue: _formData[fieldForm].toString(),
         focusNode: focusNode,
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(),
@@ -155,12 +158,11 @@ class _PatientFormPageState extends State<PatientFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       appBar: AppBar(
+        backgroundColor: kPrimaryColor,
         title: Text('Cadastro Paciente'),
         centerTitle: true,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: kPrimaryGradientColor),
-        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.save),
@@ -173,7 +175,7 @@ class _PatientFormPageState extends State<PatientFormPage> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
+                backgroundColor: kSecondaryColor,
                 valueColor: AlwaysStoppedAnimation<Color>(
                     Theme.of(context).primaryColor),
               ),
@@ -277,7 +279,10 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                     createTextFormField(
                                         fieldForm: 'profession',
                                         label: 'profissão',
-                                        focusNode: _professionFocusNode)
+                                        focusNode: _professionFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
                                   ],
                                 ),
                                 isActive: _currentStep >= 0,
@@ -315,6 +320,9 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         focusNode: _emailFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
                                   ],
                                 ),
                                 isActive: _currentStep >= 0,
@@ -362,6 +370,9 @@ class _PatientFormPageState extends State<PatientFormPage> {
                                         fieldForm: 'state',
                                         label: 'estado',
                                         focusNode: _stateFocusNode),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
                                   ],
                                 ),
                                 isActive: _currentStep >= 0,

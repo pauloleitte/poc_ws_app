@@ -4,26 +4,30 @@ import 'package:poc_ws_app/utils/app-routes.dart';
 import 'package:poc_ws_app/utils/constants.dart';
 import 'package:poc_ws_app/utils/size-config.dart';
 
-class BodyLogin extends StatefulWidget {
-  BodyLogin({Key key}) : super(key: key);
+class BodySignup extends StatefulWidget {
+  BodySignup({Key key}) : super(key: key);
 
   @override
-  _BodyLoginState createState() => _BodyLoginState();
+  _BodySignupState createState() => _BodySignupState();
 }
 
-class _BodyLoginState extends State<BodyLogin> {
+class _BodySignupState extends State<BodySignup> {
   final _form = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
 
+  final _nameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_formData.isEmpty) {
+      _formData['name'] = '';
       _formData['email'] = '';
       _formData['password'] = '';
+      _formData['confirmPassword'] = '';
     }
   }
 
@@ -74,11 +78,14 @@ class _BodyLoginState extends State<BodyLogin> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(
-                  child: Image.asset(
-                    AppImages.logo,
-                  ),
+                SizedBox(
+                  height: 20,
                 ),
+                createTextFormField(
+                    fieldForm: 'name',
+                    label: 'nome',
+                    isPassword: false,
+                    focusNode: _nameFocusNode),
                 SizedBox(
                   height: 20,
                 ),
@@ -99,13 +106,11 @@ class _BodyLoginState extends State<BodyLogin> {
                 SizedBox(
                   height: 20,
                 ),
-                InkWell(
-                  child: Text('Não tem uma conta? Clique aqui!'),
-                  onTap: () => {
-                    Navigator.pushReplacementNamed(
-                        context, AppRoutes.AUTH_SIGNUP)
-                  },
-                ),
+                createTextFormField(
+                    fieldForm: 'confirmPassword',
+                    label: 'confirme a senha',
+                    isPassword: true,
+                    focusNode: _confirmPasswordFocusNode),
                 SizedBox(
                   height: 20,
                 ),
@@ -114,9 +119,10 @@ class _BodyLoginState extends State<BodyLogin> {
                   height: getProportionateScreenHeight(30),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, AppRoutes.HOME);
+                      Navigator.pushReplacementNamed(
+                          context, AppRoutes.AUTH_HOME);
                     },
-                    child: Text('Entrar'),
+                    child: Text('Registrar'),
                   ),
                 )
               ]),

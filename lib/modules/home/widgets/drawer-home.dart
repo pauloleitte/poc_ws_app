@@ -19,7 +19,7 @@ class DrawerHome extends StatelessWidget {
               currentAccountPicture: ClipRRect(
                 borderRadius: BorderRadius.circular(40),
                 child: Image.network(
-                  'https://jpimg.com.br/uploads/2020/07/cristiano-ronaldo-tem-feito-grande-temporada-pela-juventus-1024x625.jpg',
+                  'http://localhost:3000/api/v1/files/565af4a3f2c696a1d3f001b636c72bd5-pinterest_board_photo.png',
                   height: 150.0,
                   width: 100.0,
                   fit: BoxFit.cover,

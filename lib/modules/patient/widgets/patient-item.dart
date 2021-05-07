@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/modules/patient/models/patient.dart';
 import 'package:poc_ws_app/utils/app-routes.dart';
+import 'package:poc_ws_app/utils/constants.dart';
 
 class PatientItem extends StatelessWidget {
   final Patient patient;
@@ -10,56 +11,69 @@ class PatientItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(patient.name),
-      onLongPress: () {
-        final action = CupertinoActionSheet(
-          title: Text(
-            patient.name,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-          message: Text(
-            "O que deseja fazer?",
-            style: TextStyle(fontSize: 18.0),
-          ),
-          actions: <Widget>[
-            CupertinoActionSheetAction(
-              child: Text(
-                "Editar",
-                style: TextStyle(color: Colors.blue),
+    return Card(
+      elevation: 10,
+      color: kPrimaryColor,
+      child: ListTile(
+        title: Text(
+          patient.name,
+          style: TextStyle(color: Colors.white),
+        ),
+        onLongPress: () {
+          final action = CupertinoActionSheet(
+            title: Text(
+              patient.name,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            message: Text(
+              "O que deseja fazer?",
+              style: TextStyle(fontSize: 18.0),
+            ),
+            actions: <Widget>[
+              CupertinoActionSheetAction(
+                child: Text(
+                  "Editar",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.of(context)
+                      .pushNamed(AppRoutes.PATIENT_FORM, arguments: patient);
+                },
               ),
-              isDefaultAction: true,
+              CupertinoActionSheetAction(
+                child: Text(
+                  "Excluir",
+                  style: TextStyle(color: Theme.of(context).errorColor),
+                ),
+                isDestructiveAction: true,
+                onPressed: () {
+                  print("Action 2 is been clicked");
+                  Navigator.pop(context);
+                },
+              )
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              child: Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.lightBlue),
+              ),
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.of(context)
-                    .pushNamed(AppRoutes.PATIENT_FORM, arguments: patient);
               },
             ),
-            CupertinoActionSheetAction(
-              child: Text(
-                "Excluir",
-                style: TextStyle(color: Theme.of(context).errorColor),
-              ),
-              isDestructiveAction: true,
-              onPressed: () {
-                print("Action 2 is been clicked");
-                Navigator.pop(context);
-              },
-            )
-          ],
-          cancelButton: CupertinoActionSheetAction(
-            child: Text(
-              "Cancelar",
-              style: TextStyle(color: Colors.lightBlue),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          );
+          showCupertinoModalPopup(
+              context: context, builder: (context) => action);
+        },
+        subtitle: Text(
+          '${patient.cpf}',
+          style: TextStyle(
+            color: Colors.white,
           ),
-        );
-        showCupertinoModalPopup(context: context, builder: (context) => action);
-      },
-      subtitle: Text('${patient.cpf}'),
+        ),
+      ),
     );
   }
 }
