@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poc_ws_app/src/modules/auth/widgets/body-signup.dart';
+import 'package:poc_ws_app/src/modules/auth/widgets/body_signup.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
 
 class SignupPage extends StatefulWidget {

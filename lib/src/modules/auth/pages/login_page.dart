@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poc_ws_app/src/modules/auth/widgets/body-login.dart';
+import 'package:poc_ws_app/src/modules/auth/widgets/body_login.dart';
 
 class LoginPage extends StatefulWidget {
   @override

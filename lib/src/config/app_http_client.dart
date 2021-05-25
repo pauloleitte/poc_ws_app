@@ -2,39 +2,41 @@ import 'package:dio/dio.dart';
 
 class AppHttpClient {
   final dio = Dio();
-  Future<Map<String, dynamic>> getHttp(String url) async {
+
+  Future<Response<dynamic>> getHttp(String url) async {
     try {
       var response = await dio.get(url);
-      return response.data;
-    } catch (e) {
-      print(e);
+      return response;
+    } on DioError catch (e) {
+      return e.response;
     }
   }
 
-  Future<Map<String, dynamic>> postHttp(String url, {Map data}) async {
+  Future<Response<dynamic>> postHttp(String url, {Map data}) async {
     try {
       var response = await dio.post(url, data: data);
-      return response.data;
-    } catch (e) {
-      print(e.toString());
+      return response;
+    } on DioError catch (e) {
+      return e.response;
     }
   }
 
-  Future<Map<String, dynamic>> deleteHttp(String url) async {
+  Future<Response<dynamic>> deleteHttp(String url) async {
     try {
       var response = await dio.delete(url);
-      return response.data;
-    } catch (e) {
-      print(e);
+      return response;
+    } on DioError catch (e) {
+      return e.response;
     }
   }
 
-  Future<Map<String, dynamic>> putHttp(String url, {Map data}) async {
+  Future<Response<dynamic>> putHttp(String url, {Map data}) async {
     try {
       var response = await dio.put(url, data: data);
-      return response.data;
-    } catch (e) {
-      print(e);
+      return response;
+    } on DioError catch (e) {
+      return e.response;
+      
     }
   }
 }
