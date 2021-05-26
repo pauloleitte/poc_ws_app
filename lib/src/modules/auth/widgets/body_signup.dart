@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:poc_ws_app/src/modules/auth/controllers/auth_controller.dart';
 import 'package:poc_ws_app/src/modules/auth/models/signup_request_model.dart';
@@ -46,7 +46,7 @@ class _BodySignupState extends State<BodySignup> {
           ),
           backgroundColor: kSecondaryColor,
         ));
-        Navigator.pushReplacementNamed(context, AppRoutes.AUTH_HOME);
+        Navigator.popAndPushNamed(context, AppRoutes.AUTH_HOME);
       }
       if (controller.stateSignup == AuthState.error) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -164,7 +164,10 @@ class _BodySignupState extends State<BodySignup> {
                         onPressed: controller.stateSignup == AuthState.loading
                             ? null
                             : signup,
-                        child: Text('Entrar'),
+                        child: Text(
+                            'Confirmar',
+                            style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold),
+                          ),
                       );
                     },
                   ),

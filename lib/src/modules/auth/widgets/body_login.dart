@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:poc_ws_app/src/config/app_images.dart';
 import 'package:poc_ws_app/src/modules/auth/controllers/auth_controller.dart';
 import 'package:poc_ws_app/src/modules/auth/models/login_request_model.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
-import 'package:poc_ws_app/src/utils/size-config.dart';
+import 'package:poc_ws_app/src/utils/size_config.dart';
 
 class BodyLogin extends StatefulWidget {
   BodyLogin({Key key}) : super(key: key);
@@ -36,7 +36,7 @@ class _BodyLoginState extends State<BodyLogin> {
     var controller = context.read<AuthController>();
     controller.addListener(() {
       if (controller.stateLogin == AuthState.success) {
-        Navigator.pushReplacementNamed(context, AppRoutes.HOME);
+        Navigator.popAndPushNamed(context, AppRoutes.HOME);
       }
       if (controller.stateLogin == AuthState.error) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -170,7 +170,12 @@ class _BodyLoginState extends State<BodyLogin> {
                         onPressed: controller.stateLogin == AuthState.loading
                             ? null
                             : login,
-                        child: Text('Entrar'),
+                        child: Text(
+                          'Entrar',
+                          style: TextStyle(
+                              color: kPrimaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
                       );
                     },
                   ),

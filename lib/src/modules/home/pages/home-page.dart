@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/src/modules/home/widgets/body-home.dart';
 import 'package:poc_ws_app/src/modules/home/widgets/drawer-home.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.exit_to_app_sharp),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, AppRoutes.AUTH_HOME);
+                Navigator.popAndPushNamed(context, AppRoutes.AUTH_HOME);
               },
             )
           ]),

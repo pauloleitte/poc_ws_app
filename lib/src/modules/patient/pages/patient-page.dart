@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/src/modules/patient/widgets/body-patient.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
 
 class PatientPage extends StatelessWidget {

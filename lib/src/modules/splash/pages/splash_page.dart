@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/src/config/app_images.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
-import 'package:poc_ws_app/src/utils/size-config.dart';
+import 'package:poc_ws_app/src/utils/size_config.dart';
 
 class SplashPage extends StatelessWidget {
   @override

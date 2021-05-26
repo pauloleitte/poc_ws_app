@@ -36,6 +36,7 @@ class AuthController extends ChangeNotifier {
     try {
       await authService.signup(model);
       stateSignup = AuthState.success;
+      stateLogin = AuthState.idle;
       notifyListeners();
     } catch (e) {
       stateSignup = AuthState.error;

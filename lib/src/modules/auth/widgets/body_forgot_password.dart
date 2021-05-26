@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:poc_ws_app/src/modules/auth/models/forgot_password_request_model.dart';
-import 'package:poc_ws_app/src/utils/app-routes.dart';
+import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:provider/provider.dart';
 import 'package:poc_ws_app/src/modules/auth/controllers/auth_controller.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
-import 'package:poc_ws_app/src/utils/size-config.dart';
+import 'package:poc_ws_app/src/utils/size_config.dart';
 
 class BodyForgotPassword extends StatefulWidget {
   BodyForgotPassword({Key key}) : super(key: key);
@@ -18,6 +18,8 @@ class _BodyForgotPasswordState extends State<BodyForgotPassword> {
   final _formData = Map<String, Object>();
 
   final _emailFocusNode = FocusNode();
+
+  bool _loading = false;
 
   @override
   void didChangeDependencies() {
@@ -39,9 +41,12 @@ class _BodyForgotPasswordState extends State<BodyForgotPassword> {
     var controller = context.read<AuthController>();
     controller.addListener(() {
       if (controller.stateForgotPassword == AuthState.success) {
-        Navigator.pushReplacementNamed(context, AppRoutes.AUTH_RESET_PASSWORD);
+        Navigator.popAndPushNamed(context, AppRoutes.AUTH_RESET_PASSWORD);
       }
       if (controller.stateForgotPassword == AuthState.error) {
+        setState(() {
+          _loading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
             'Erro ao realizar o envio do e-mail por favor tente novamente.',
@@ -55,6 +60,9 @@ class _BodyForgotPasswordState extends State<BodyForgotPassword> {
   }
 
   Future<void> forgotPassword() async {
+    setState(() {
+      _loading = true;
+    });
     var controller = context.read<AuthController>();
     var model = ForgotPasswordRequestModel(email: _formData['email']);
     await controller.forgotPassword(model);
@@ -93,41 +101,68 @@ class _BodyForgotPasswordState extends State<BodyForgotPassword> {
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
       color: kPrimaryColor,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Form(
-          key: _form,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                createTextFormField(
-                  fieldForm: 'email',
-                  label: 'email',
-                  focusNode: _emailFocusNode,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: getProportionateScreenHeight(30),
-                  child: Consumer<AuthController>(
-                    builder: (context, controller, child) {
-                      return ElevatedButton(
-                        onPressed:
-                            controller.stateForgotPassword == AuthState.loading
-                                ? null
-                                : forgotPassword,
-                        child: Text('Confirmar'),
-                      );
-                    },
-                  ),
-                )
-              ]),
-        ),
-      ),
+      child: _loading
+          ? Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    ),
+                    Text('Carregando')
+                  ]),
+            )
+          : Padding(
+              padding: EdgeInsets.all(10),
+              child: Form(
+                key: _form,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Esqueci minha senha',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      Text('Insira o e-mail associado à sua conta.'),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      createTextFormField(
+                        fieldForm: 'email',
+                        label: 'email',
+                        focusNode: _emailFocusNode,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: getProportionateScreenHeight(30),
+                        child: Consumer<AuthController>(
+                          builder: (context, controller, child) {
+                            return ElevatedButton(
+                              onPressed:
+                                  controller.stateLogin == AuthState.loading
+                                      ? null
+                                      : forgotPassword,
+                              child: Text(
+                                'Confirmar',
+                                style: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ]),
+              )),
     );
   }
 }

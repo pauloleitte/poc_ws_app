@@ -5,8 +5,8 @@ import 'constants.dart';
 ThemeData theme() {
   return ThemeData(
     scaffoldBackgroundColor: Colors.white,
-    accentColor: purple,
-    primarySwatch: purple,
+    accentColor: white,
+    primarySwatch: white,
     fontFamily: 'Muli',
     appBarTheme: appBarTheme(),
     textTheme: textTheme(),
@@ -15,6 +15,9 @@ ThemeData theme() {
     textSelectionTheme: textSelectionThemeData(),
   );
 }
+
+final ButtonStyle style =
+    ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20, color: kPrimaryColor));
 
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder enabledBorder = OutlineInputBorder(
