@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poc_ws_app/src/utils/app_routes.dart';
-import 'package:provider/provider.dart';
-import 'package:poc_ws_app/src/modules/auth/controllers/auth_controller.dart';
-import 'package:poc_ws_app/src/modules/auth/models/signup_request_model.dart';
+import 'package:poc_ws_app/src/modules/auth/controllers/signup_controller.dart';
+import 'package:poc_ws_app/src/modules/auth/view-models/signup_view_model.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
 
 class BodySignup extends StatefulWidget {
@@ -14,51 +12,26 @@ class BodySignup extends StatefulWidget {
 
 class _BodySignupState extends State<BodySignup> {
   final _form = GlobalKey<FormState>();
-  final _formData = Map<String, Object>();
 
   final _nameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
   final _confirmPasswordFocusNode = FocusNode();
 
+  final _passwordController = TextEditingController();
+
+  final _controller = SignupController();
+
+  var model = SignupViewModel();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_formData.isEmpty) {
-      _formData['name'] = '';
-      _formData['email'] = '';
-      _formData['password'] = '';
-      _formData['confirmPassword'] = '';
-    }
   }
 
   @override
   void initState() {
     super.initState();
-    var controller = context.read<AuthController>();
-    controller.addListener(() {
-      if (controller.stateSignup == AuthState.success) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-            'Usuário cadastro com sucesso!',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: kPrimaryColor),
-          ),
-          backgroundColor: kSecondaryColor,
-        ));
-        Navigator.popAndPushNamed(context, AppRoutes.AUTH_HOME);
-      }
-      if (controller.stateSignup == AuthState.error) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-            'Erro ao realizar a autenticação por favor tente novamente.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: kPrimaryColor),
-          ),
-          backgroundColor: kSecondaryColor,
-        ));
-      }
-    });
   }
 
   void _requestFocus(FocusNode focusNode) {
@@ -68,42 +41,136 @@ class _BodySignupState extends State<BodySignup> {
   }
 
   Future<void> signup() async {
-    var controller = context.read<AuthController>();
-    var model = SignupRequestModel(
-        name: _formData['name'],
-        email: _formData['email'],
-        password: _formData['password']);
-    await controller.signup(model);
+    if (_form.currentState.validate()) {
+      _form.currentState.save();
+      setState(() {});
+      var result = await _controller.signup(model);
+      debugPrint(result.toString());
+      setState(() {});
+    }
   }
 
-  Widget createTextFormField(
-      {String fieldForm,
-      FocusNode focusNode,
-      String label,
-      bool isPassword,
-      TextInputAction textInputAction,
-      TextInputType keyboardType = TextInputType.text}) {
+  bool isEmail(String value) {
+    String regex =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+    RegExp regExp = new RegExp(regex);
+
+    return value.isNotEmpty && regExp.hasMatch(value);
+  }
+
+  Widget buildEmail() {
     return TextFormField(
         onTap: () {
-          _requestFocus(focusNode);
+          _requestFocus(_emailFocusNode);
         },
-        initialValue: _formData[fieldForm].toString(),
-        focusNode: focusNode,
-        obscureText: isPassword,
+        focusNode: _emailFocusNode,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-            labelText: label,
+            labelText: 'e-mail',
             border: OutlineInputBorder(),
             labelStyle: TextStyle(
                 color: kSecondaryColor,
-                fontWeight:
-                    focusNode.hasFocus ? FontWeight.bold : FontWeight.normal)),
-        textInputAction: textInputAction,
-        keyboardType: keyboardType,
-        onChanged: (value) {
-          _formData[fieldForm] = value;
+                fontWeight: _emailFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (!isEmail(value)) {
+            return 'Informe um e-mail válido';
+          }
+          return null;
         },
-        onSaved: (value) => _formData[fieldForm] = value);
+        onSaved: (value) {
+          model.email = value;
+        });
+  }
+
+  Widget buildPassword() {
+    return TextFormField(
+        onTap: () {
+          _requestFocus(_passwordFocusNode);
+        },
+        obscureText: true,
+        controller: _passwordController,
+        focusNode: _passwordFocusNode,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            labelText: 'senha',
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(
+                color: kSecondaryColor,
+                fontWeight: _passwordFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'campo obrigatório';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          model.password = value;
+        });
+  }
+
+  Widget buildConfirmPassword() {
+    return TextFormField(
+        onTap: () {
+          _requestFocus(_confirmPasswordFocusNode);
+        },
+        obscureText: true,
+        focusNode: _confirmPasswordFocusNode,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            labelText: 'senha',
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(
+                color: kSecondaryColor,
+                fontWeight: _confirmPasswordFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'campo obrigatório';
+          }
+          if (value.isNotEmpty) {
+            if (value != _passwordController.text) {
+              return 'As senhas não correspondem.';
+            }
+            return null;
+          }
+        },
+        onSaved: (value) {
+          model.confirmPassword = value;
+        });
+  }
+
+  Widget buildName() {
+    return TextFormField(
+        onTap: () {
+          _requestFocus(_nameFocusNode);
+        },
+        focusNode: _nameFocusNode,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            labelText: 'nome',
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(
+                color: kSecondaryColor,
+                fontWeight: _nameFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        keyboardType: TextInputType.text,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'campo obrigatório';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          model.name = value;
+        });
   }
 
   @override
@@ -120,58 +187,32 @@ class _BodySignupState extends State<BodySignup> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                buildName(),
                 SizedBox(
                   height: 20,
                 ),
-                createTextFormField(
-                    fieldForm: 'name',
-                    label: 'nome',
-                    isPassword: false,
-                    focusNode: _nameFocusNode),
+                buildEmail(),
                 SizedBox(
                   height: 20,
                 ),
-                createTextFormField(
-                    fieldForm: 'email',
-                    label: 'email',
-                    keyboardType: TextInputType.emailAddress,
-                    isPassword: false,
-                    focusNode: _emailFocusNode),
+                buildPassword(),
                 SizedBox(
                   height: 20,
                 ),
-                createTextFormField(
-                    fieldForm: 'password',
-                    label: 'senha',
-                    isPassword: true,
-                    focusNode: _passwordFocusNode),
+                buildConfirmPassword(),
                 SizedBox(
                   height: 20,
                 ),
-                createTextFormField(
-                    fieldForm: 'confirmPassword',
-                    label: 'confirme a senha',
-                    isPassword: true,
-                    focusNode: _confirmPasswordFocusNode),
                 SizedBox(
-                  height: 20,
-                ),
-                    SizedBox(
-                  width: double.infinity,
-                  child: Consumer<AuthController>(
-                    builder: (context, controller, child) {
-                      return ElevatedButton(
-                        onPressed: controller.stateSignup == AuthState.loading
-                            ? null
-                            : signup,
-                        child: Text(
-                            'Confirmar',
-                            style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold),
-                          ),
-                      );
-                    },
-                  ),
-                )
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: model.busy ? null : signup,
+                      child: Text(
+                        'Confirmar',
+                        style: TextStyle(
+                            color: kPrimaryColor, fontWeight: FontWeight.bold),
+                      ),
+                    )),
               ]),
         ),
       ),

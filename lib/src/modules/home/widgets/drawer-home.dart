@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:poc_ws_app/src/modules/auth/stores/auth_store.dart';
 import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
+import 'package:provider/provider.dart';
 
 class DrawerHome extends StatelessWidget {
   const DrawerHome({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var store = Provider.of<AuthStore>(context);
     return Drawer(
       child: Container(
         color: kPrimaryColor,
@@ -14,8 +17,8 @@ class DrawerHome extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text('Cristiano Ronaldo'),
-              accountEmail: Text('cris@cris.com'),
+              accountName: Text(store.user.name),
+              accountEmail: Text(store.user.email),
               currentAccountPicture: ClipRRect(
                 borderRadius: BorderRadius.circular(40),
                 child: Image.network(

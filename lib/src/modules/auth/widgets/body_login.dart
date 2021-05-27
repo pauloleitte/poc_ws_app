@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:poc_ws_app/src/config/app_images.dart';
-import 'package:poc_ws_app/src/modules/auth/controllers/auth_controller.dart';
-import 'package:poc_ws_app/src/modules/auth/models/login_request_model.dart';
+import 'package:poc_ws_app/src/modules/auth/controllers/login_controller.dart';
+import 'package:poc_ws_app/src/modules/auth/stores/auth_store.dart';
+import 'package:poc_ws_app/src/modules/auth/view-models/login_view_model.dart';
 import 'package:poc_ws_app/src/utils/app_routes.dart';
 import 'package:poc_ws_app/src/utils/constants.dart';
 import 'package:poc_ws_app/src/utils/size_config.dart';
+import 'package:provider/provider.dart';
 
 class BodyLogin extends StatefulWidget {
   BodyLogin({Key key}) : super(key: key);
@@ -16,46 +17,38 @@ class BodyLogin extends StatefulWidget {
 
 class _BodyLoginState extends State<BodyLogin> {
   final _form = GlobalKey<FormState>();
-  final _formData = Map<String, Object>();
+
+  final _controller = LoginController();
 
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
+  var model = LoginViewModel();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_formData.isEmpty) {
-      _formData['email'] = '';
-      _formData['password'] = '';
-    }
   }
 
   @override
   void initState() {
     super.initState();
-    var controller = context.read<AuthController>();
-    controller.addListener(() {
-      if (controller.stateLogin == AuthState.success) {
-        Navigator.popAndPushNamed(context, AppRoutes.HOME);
-      }
-      if (controller.stateLogin == AuthState.error) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-            'Erro ao realizar a autenticação por favor tente novamente.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: kPrimaryColor),
-          ),
-          backgroundColor: kSecondaryColor,
-        ));
-      }
-    });
   }
 
-  Future<void> login() async {
-    var controller = context.read<AuthController>();
-    var model = LoginRequestModel(
-        email: _formData['email'], password: _formData['password']);
-    await controller.login(model);
+  Future<void> login() {
+    if (_form.currentState.validate()) {
+      _form.currentState.save();
+      setUserState();
+    }
+  }
+
+  setUserState() async {
+    setState(() {});
+    var user = await _controller.login(model);
+    var store = Provider.of<AuthStore>(context, listen: false);
+    store.setUser(user);
+    Navigator.popAndPushNamed(context, AppRoutes.HOME);
+    setState(() {});
   }
 
   void _requestFocus(FocusNode focusNode) {
@@ -64,35 +57,57 @@ class _BodyLoginState extends State<BodyLogin> {
     });
   }
 
-  Widget createTextFormField(
-      {String fieldForm,
-      FocusNode focusNode,
-      String label,
-      bool isPassword,
-      TextInputAction textInputAction,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget buildEmail() {
     return TextFormField(
         onTap: () {
-          _requestFocus(focusNode);
+          _requestFocus(_emailFocusNode);
         },
-        initialValue: _formData[fieldForm].toString(),
-        focusNode: focusNode,
-        obscureText: isPassword,
+        focusNode: _emailFocusNode,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-            labelText: label,
+            labelText: 'e-mail',
             border: OutlineInputBorder(),
             labelStyle: TextStyle(
                 color: kSecondaryColor,
-                fontWeight:
-                    focusNode.hasFocus ? FontWeight.bold : FontWeight.normal)),
-        textInputAction: textInputAction,
-        keyboardType: keyboardType,
-        onChanged: (value) {
-          _formData[fieldForm] = value;
+                fontWeight: _emailFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        keyboardType: TextInputType.emailAddress,
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'campo obrigatório';
+          }
+          return null;
         },
         onSaved: (value) {
-          _formData[fieldForm] = value;
+          model.email = value;
+        });
+  }
+
+  Widget buildPassword() {
+    return TextFormField(
+        onTap: () {
+          _requestFocus(_passwordFocusNode);
+        },
+        obscureText: true,
+        focusNode: _passwordFocusNode,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+            labelText: 'senha',
+            border: OutlineInputBorder(),
+            labelStyle: TextStyle(
+                color: kSecondaryColor,
+                fontWeight: _passwordFocusNode.hasFocus
+                    ? FontWeight.bold
+                    : FontWeight.normal)),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'campo obrigatório';
+          }
+          return null;
+        },
+        onSaved: (value) {
+          model.password = value;
         });
   }
 
@@ -104,83 +119,70 @@ class _BodyLoginState extends State<BodyLogin> {
       color: kPrimaryColor,
       child: Padding(
         padding: EdgeInsets.all(10),
-        child: Form(
-          key: _form,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Image.asset(
-                    AppImages.logo,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _form,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Image.asset(
+                      AppImages.logo,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                createTextFormField(
-                    fieldForm: 'email',
-                    label: 'email',
-                    keyboardType: TextInputType.emailAddress,
-                    isPassword: false,
-                    focusNode: _emailFocusNode),
-                SizedBox(
-                  height: 20,
-                ),
-                createTextFormField(
-                    fieldForm: 'password',
-                    label: 'senha',
-                    isPassword: true,
-                    focusNode: _passwordFocusNode),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          child: Text('Não tenho uma conta'),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  buildEmail(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  buildPassword(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: InkWell(
+                            child: Text('Não tenho uma conta'),
+                            onTap: () => {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.AUTH_SIGNUP)
+                            },
+                          ),
+                        ),
+                        InkWell(
+                          child: Text('Esqueci minha senha'),
                           onTap: () => {
-                            Navigator.pushNamed(context, AppRoutes.AUTH_SIGNUP)
+                            Navigator.pushReplacementNamed(
+                                context, AppRoutes.AUTH_FORGOT_PASSWORD)
                           },
                         ),
-                      ),
-                      InkWell(
-                        child: Text('Esqueci minha senha'),
-                        onTap: () => {
-                          Navigator.pushReplacementNamed(
-                              context, AppRoutes.AUTH_FORGOT_PASSWORD)
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: getProportionateScreenHeight(30),
-                  child: Consumer<AuthController>(
-                    builder: (context, controller, child) {
-                      return ElevatedButton(
-                        onPressed: controller.stateLogin == AuthState.loading
-                            ? null
-                            : login,
-                        child: Text(
-                          'Entrar',
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    },
+                  SizedBox(
+                    height: 10,
                   ),
-                )
-              ]),
+                  SizedBox(
+                    width: double.infinity,
+                    height: getProportionateScreenHeight(30),
+                    child: ElevatedButton(
+                      onPressed: model.busy ? null : login,
+                      child: Text(
+                        'Entrar',
+                        style: TextStyle(
+                            color: kPrimaryColor, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  )
+                ]),
+          ),
         ),
       ),
     );

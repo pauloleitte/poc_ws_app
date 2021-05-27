@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 
-class AppHttpClient {
+class HttpClient {
   final dio = Dio();
 
-  Future<Response<dynamic>> getHttp(String url) async {
+  Future<void> getHttp(String url) async {
     try {
       var response = await dio.get(url);
       return response;
@@ -12,7 +12,7 @@ class AppHttpClient {
     }
   }
 
-  Future<Response<dynamic>> postHttp(String url, {Map data}) async {
+  Future<Response> postHttp(String url, {Map data}) async {
     try {
       var response = await dio.post(url, data: data);
       return response;
@@ -21,7 +21,7 @@ class AppHttpClient {
     }
   }
 
-  Future<Response<dynamic>> deleteHttp(String url) async {
+  Future<void> deleteHttp(String url) async {
     try {
       var response = await dio.delete(url);
       return response;
@@ -30,13 +30,12 @@ class AppHttpClient {
     }
   }
 
-  Future<Response<dynamic>> putHttp(String url, {Map data}) async {
+  Future<void> putHttp(String url, {Map data}) async {
     try {
       var response = await dio.put(url, data: data);
       return response;
     } on DioError catch (e) {
       return e.response;
-      
     }
   }
 }

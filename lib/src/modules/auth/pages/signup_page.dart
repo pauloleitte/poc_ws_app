@@ -13,9 +13,8 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: kPrimaryColor,
-          title: Text("Registrar"),
           centerTitle: true,
         ),
-        body: SingleChildScrollView(child: BodySignup()));
+        body: BodySignup());
   }
 }
